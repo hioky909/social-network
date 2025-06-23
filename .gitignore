@@ -1,0 +1,35 @@
+# Node/Vue.js
+node_modules/
+frontend/dist/
+frontend/.env*
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Go
+backend/social_network.db
+backend/*.db
+backend/go.sum
+backend/bin/
+backend/coverage.out
+
+# OS/Editor
+.DS_Store
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+.idea/
+.vscode/
+*.log
+
+# System
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Test/coverage
+*.out
+coverage/
