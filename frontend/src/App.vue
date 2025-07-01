@@ -13,7 +13,18 @@
       <textarea v-model="form.about_me" placeholder="À propos de moi (optionnel)"></textarea>
       <button type="submit">S'inscrire</button>
     </form>
+
+    <h1>Connexion</h1>
+    <form @submit.prevent="login">
+      <input v-model="loginForm.email_or_username" type="text" placeholder="Email ou nom d'utilisateur" required />
+      <input v-model="loginForm.password" type="password" placeholder="Mot de passe" required />
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <button @click="testProtected">Tester accès protégé</button>
+
     <div v-if="message">{{ message }}</div>
+    <div v-if="protectedMessage">{{ protectedMessage }}</div>
   </div>
 </template>
 
@@ -33,13 +44,18 @@ export default {
         nickname: '',
         about_me: ''
       },
-      message: ''
+      loginForm: {
+        email_or_username: '',
+        password: ''
+      },
+      message: '',
+      protectedMessage: ''
     }
   },
   methods: {
     async register() {
       try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('http://localhost:8081/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(this.form)
@@ -52,6 +68,35 @@ export default {
         }
       } catch (err) {
         this.message = "Erreur réseau.";
+      }
+    },
+    async login() {
+      const response = await fetch('http://localhost:8081/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email_or_username: this.loginForm.email_or_username,
+          password: this.loginForm.password
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        this.message = "Connexion réussie !";
+      } else {
+        this.message = "Identifiants invalides";
+      }
+    },
+    async testProtected() {
+      console.log("Testing protected route...");
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8081/api/protected', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (response.ok) {
+        this.protectedMessage = await response.text();
+      } else {
+        this.protectedMessage = "Accès refusé (token manquant ou invalide)";
       }
     }
   }

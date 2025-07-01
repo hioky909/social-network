@@ -11,3 +11,8 @@ type RegisterForm struct {
 	Nickname    string `json:"nickname"`
 	AboutMe     string `json:"about_me"`
 }
+
+type LoginForm struct {
+    EmailOrUsername string `json:"email_or_username"`
+    Password        string `json:"password"`
+}

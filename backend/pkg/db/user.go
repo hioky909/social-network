@@ -41,3 +41,19 @@ func InsertUser(db *sql.DB, form structure.RegisterForm) error {
 	)
 	return err
 }
+
+func AuthenticateUser(db *sql.DB, form structure.LoginForm) (int, error) {
+    var id int
+    var hashed string
+    err := db.QueryRow(
+        `SELECT id, password FROM users WHERE email = ? OR username = ?`,
+        form.EmailOrUsername, form.EmailOrUsername,
+    ).Scan(&id, &hashed)
+    if err != nil {
+        return 0, errors.New("Utilisateur non trouvé")
+    }
+    if bcrypt.CompareHashAndPassword([]byte(hashed), []byte(form.Password)) != nil {
+        return 0, errors.New("Mot de passe incorrect")
+    }
+    return id, nil
+}
